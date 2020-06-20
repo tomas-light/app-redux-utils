@@ -5,6 +5,6 @@ export function createReducers<TReducers>(
     ...params: any
 ): Reducer<TReducers> {
 
-    const reducers = getReducers(params);
+    const reducers = getReducers.apply(null, params);
     return combineReducers<TReducers>(reducers);
 }
