@@ -1,37 +1,14 @@
-import { AppAction } from "./AppAction";
+import { AppAction } from "./types";
 
-export function createAction(actionType: string, data: any = {}): AppAction {
-    let payload;
+export function createAction(actionType: string, payload: any = {}): AppAction {
+    let _payload;
 
-    if (typeof data === "object" && !Array.isArray(data)) {
-        payload = { ...data };
+    if (typeof payload === "object" && !Array.isArray(payload)) {
+        _payload = { ...payload };
     }
     else {
-        payload = data;
+        _payload = payload;
     }
 
-    return {
-        type: actionType,
-        payload,
-    };
-}
-
-export function createActionWithCallback(
-    actionType: string, data: any = {}
-): (
-    callbackAction?: () => AppAction
-) => AppAction {
-
-    const action = createAction(actionType, data);
-    const actionWithCallback = (callbackAction?: () => AppAction): AppAction => {
-        if (typeof callbackAction === "function") {
-            return {
-                ...action,
-                callbackAction,
-            };
-        }
-        return action;
-    };
-
-    return actionWithCallback;
+    return new AppAction(actionType, _payload);
 }
