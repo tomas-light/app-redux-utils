@@ -1,9 +1,9 @@
-import { AppAction } from "./AppAction";
+import { IAppAction } from "./IAppAction";
 
 function Reducer<TStore>(initialStore: TStore, updateActionType: string) {
     return (
         store: TStore = initialStore,
-        action: AppAction
+        action: IAppAction
     ): TStore => {
         if (action.type === updateActionType) {
             return {

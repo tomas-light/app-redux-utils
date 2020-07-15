@@ -7,4 +7,7 @@ export interface IAppAction<TPayload = any> extends AnyAction {
     callbackAction?: CallbackAction;
     actions?: IAppAction[];
     stopPropagation?: boolean;
+
+    stop(): void;
+    getActions(): CallbackAction[];
 }

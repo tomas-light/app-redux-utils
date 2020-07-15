@@ -16,23 +16,52 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
         this.stopPropagation = false;
     }
 
-    stop(): void {
-        this.stopPropagation = true;
+    static stop(appAction: IAppAction): void {
+        appAction.stopPropagation = true;
     }
 
-    getActions(): CallbackAction[] {
+    static getActions(appAction: IAppAction): CallbackAction[] {
         const actions: CallbackAction[] = [];
 
-        if (typeof this.callbackAction === "function") {
-            actions.push(this.callbackAction);
+        if (typeof appAction.callbackAction === "function") {
+            actions.push(appAction.callbackAction);
         }
 
-        if (Array.isArray(this.actions) && this.actions.length > 0) {
-            this.actions.forEach(action => {
+        if (Array.isArray(appAction.actions) && appAction.actions.length > 0) {
+            appAction.actions.forEach(action => {
                 actions.push(() => action);
             });
         }
 
         return actions;
+    }
+
+    stop(): void {
+        AppAction.stop(this);
+    }
+
+    getActions(): CallbackAction[] {
+        return AppAction.getActions(this);
+    }
+
+    toPlainObject(): IAppAction {
+        const keys = Object.keys(this);
+        const plainObject: IAppAction = {} as any;
+
+        keys.forEach(key => {
+            if (key !== "toPlainObject") {
+                // @ts-ignore
+                plainObject[key] = this[key];
+            }
+        });
+
+        plainObject.stop = function() {
+            AppAction.stop(this);
+        }
+        plainObject.getActions = function () {
+            return AppAction.getActions(this);
+        }
+
+        return plainObject;
     }
 }

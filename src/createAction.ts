@@ -1,6 +1,6 @@
-import { AppAction } from "./types";
+import { IAppAction, AppAction } from "./types";
 
-export function createAction(actionType: string, payload: any = {}): AppAction {
+export function createAction(actionType: string, payload: any = {}): IAppAction {
     let _payload;
 
     if (typeof payload === "object" && !Array.isArray(payload)) {
@@ -10,5 +10,5 @@ export function createAction(actionType: string, payload: any = {}): AppAction {
         _payload = payload;
     }
 
-    return new AppAction(actionType, _payload);
+    return new AppAction(actionType, _payload).toPlainObject();
 }
