@@ -198,8 +198,10 @@ export class UsersWatcher {
         return function* (action: AppAction) {
             yield saga(action);
 
-            if (typeof action.callbackAction === "function") {
-                yield put(action.callbackAction());
+            if (!action.stopPropagation) {
+                const actions = action.getActions();
+                const putActionEffects = actions.map(action => put(action()));
+                yield all(putActionEffects);
             }
         };
     }

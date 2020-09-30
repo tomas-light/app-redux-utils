@@ -28,7 +28,7 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
         }
 
         if (Array.isArray(appAction.actions) && appAction.actions.length > 0) {
-            appAction.actions.forEach(action => {
+            appAction.actions.forEach((action) => {
                 actions.push(() => action);
             });
         }
@@ -48,7 +48,7 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
         const keys = Object.keys(this);
         const plainObject: IAppAction = {} as any;
 
-        keys.forEach(key => {
+        keys.forEach((key) => {
             if (key !== "toPlainObject") {
                 // @ts-ignore
                 plainObject[key] = this[key];
@@ -57,10 +57,10 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
 
         plainObject.stop = function() {
             AppAction.stop(this);
-        }
+        };
         plainObject.getActions = function () {
             return AppAction.getActions(this);
-        }
+        };
 
         return plainObject;
     }
