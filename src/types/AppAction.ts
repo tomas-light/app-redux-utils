@@ -1,9 +1,9 @@
-import { IAppAction } from "./IAppAction";
+import { Action } from "./Action";
 import { CallbackAction } from "./CallbackAction";
 
-export class AppAction<TPayload = any> implements IAppAction<TPayload> {
+export class AppAction<TPayload = {}> implements Action<TPayload> {
     type: any;
-    payload?: TPayload;
+    payload: TPayload;
 
     callbackAction?: CallbackAction;
     actions?: AppAction[];
@@ -11,16 +11,16 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
 
     constructor(type: string, payload?: TPayload) {
         this.type = type;
-        this.payload = payload;
+        this.payload = payload as TPayload;
         this.actions = [];
         this.stopPropagation = false;
     }
 
-    static stop(appAction: IAppAction): void {
+    static stop(appAction: Action): void {
         appAction.stopPropagation = true;
     }
 
-    static getActions(appAction: IAppAction): CallbackAction[] {
+    static getActions(appAction: Action): CallbackAction[] {
         const actions: CallbackAction[] = [];
 
         if (typeof appAction.callbackAction === "function") {
@@ -44,9 +44,9 @@ export class AppAction<TPayload = any> implements IAppAction<TPayload> {
         return AppAction.getActions(this);
     }
 
-    toPlainObject(): IAppAction {
+    toPlainObject(): Action {
         const keys = Object.keys(this);
-        const plainObject: IAppAction = {} as any;
+        const plainObject: Action = {} as any;
 
         keys.forEach((key) => {
             if (key !== "toPlainObject") {

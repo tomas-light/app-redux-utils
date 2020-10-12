@@ -1,4 +1,4 @@
-import { IAppAction } from "./IAppAction";
+import { Action } from "./Action";
 import { CallbackAction } from "./CallbackAction";
 
-export type ActionWithCallback = (callbackAction: CallbackAction) => IAppAction;
+export type ActionWithCallback = (callbackAction: CallbackAction) => Action;

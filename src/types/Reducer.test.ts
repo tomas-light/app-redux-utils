@@ -38,5 +38,13 @@ it("any action", () => {
     );
 
     const updatedStore = reducer(store, action);
-    expect(updatedStore).toStrictEqual(store);
+    expect(updatedStore === store).toBe(true);
+});
+
+it("empty action", () => {
+    const store = new Store();
+    const action = new AppAction(actionType);
+
+    const updatedStore = reducer(store, action);
+    expect(updatedStore === store).toBe(false);
 });

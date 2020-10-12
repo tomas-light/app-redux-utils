@@ -1,5 +1,4 @@
 export * from "./ActionWithCallback";
-export * from "./IAppAction";
-export * from "./AppAction";
+export * from "./Action";
 export * from "./CallbackAction";
 export * from "./Reducer";

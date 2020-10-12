@@ -129,7 +129,7 @@ export function configureApp(): Store<State> {
 ```ts
 // Users.saga.ts
 import { put } from "@redux-saga/core/effects";
-import { AppAction } from "app-redux-utils";
+import { Action } from "app-redux-utils";
 
 import { UsersApi } from "@api/UsersApi";
 import { UsersActions, ILoadUserData } from "../redux/Users.actions";
@@ -140,7 +140,7 @@ export class UsersSaga {
         yield put(UsersActions.updateStore(partialStore));
     }
 
-    public static* loadUsers(action: AppAction) {
+    public static* loadUsers(action: Action) {
         // some logic ...
 
         yield UsersSaga.updateStore({
@@ -148,7 +148,7 @@ export class UsersSaga {
         });
     }
 
-    public static* loadUser(action: AppAction<ILoadUserData>) {
+    public static* loadUser(action: Action<ILoadUserData>) {
         // some logic ...
 
         const response = yield UsersApi.getUserById(action.payload.userId);
@@ -167,7 +167,7 @@ export class UsersSaga {
 
 import { SagaMiddleware } from "redux-saga";
 import { ForkEffect, put, PutEffect, TakeEffect, takeLatest } from "@redux-saga/core/effects";
-import { AppAction } from "app-redux-utils";
+import { Action } from "app-redux-utils";
 
 import { UsersActions } from "../redux/Users.actions";
 import { UsersSaga } from "./Users.saga";
@@ -194,8 +194,8 @@ export class UsersWatcher {
         );
     }
 
-    private getSagaWithCallbackAction(saga: (action: AppAction) => void): (action: AppAction) => void {
-        return function* (action: AppAction) {
+    private getSagaWithCallbackAction(saga: (action: Action) => void): (action: Action) => void {
+        return function* (action: Action) {
             yield saga(action);
 
             if (!action.stopPropagation) {
@@ -206,7 +206,7 @@ export class UsersWatcher {
         };
     }
 
-    private watchLatest(actionType: string, saga: (action: AppAction) => void) {
+    private watchLatest(actionType: string, saga: (action: Action) => void) {
         const sagaWithCallbackAction = this.getSagaWithCallbackAction(saga);
         this.watchFunctions.push(
             function* () {
