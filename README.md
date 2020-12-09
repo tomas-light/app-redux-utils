@@ -201,13 +201,11 @@ export const UserWatcher = watcher<UserController>(
 
 ```ts
 // controllerWatchers.ts
-import { Controller, Watcher } from 'app-saga-utilsr';
+import { Watcher } from 'app-saga-utilsr';
 import { State } from "./State";
 import { UserWatcher } from '/User.watcher';
 
-// if you use base controller (it may by very convinient for example for displaying notifications) specify your type here.
-// Or keep 'Controller' interface here
-const controllerWatchers: Watcher<State, Controller>[] = [
+const controllerWatchers: Watcher<State>[] = [
   UserWatcher,
   // rest watchers
 ];
