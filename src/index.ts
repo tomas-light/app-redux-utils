@@ -1,3 +1,4 @@
+export * from "./controller";
 export * from "./createAction";
 export * from "./createActionWithCallback";
 export * from "./createReducers";
