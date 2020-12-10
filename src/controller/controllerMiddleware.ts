@@ -58,12 +58,13 @@ function controllerGenerator(
     });
 
     actionCursor++;
-    if (isAction(action) && !action.stopPropagation) {
-      actions.splice(actionCursor, 0, ...action.getActions());
-    }
 
     return {
-      value: Promise.all(promises),
+      value: Promise.all(promises).then(() => {
+        if (isAction(action) && !action.stopPropagation) {
+          actions.splice(actionCursor, 0, ...action.getActions());
+        }
+      }),
       done: false,
     };
   }
