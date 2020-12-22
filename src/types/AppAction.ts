@@ -1,67 +1,66 @@
-import { Action } from "./Action";
-import { CallbackAction } from "./CallbackAction";
+import { Action } from './Action';
+import { CallbackAction } from './CallbackAction';
 
-export class AppAction<TPayload = {}> implements Action<TPayload> {
-    type: any;
-    payload: TPayload;
+export class AppAction<TPayload = any> implements Action<TPayload> {
+  type: any;
+  payload: TPayload;
 
-    callbackAction?: CallbackAction;
-    actions?: AppAction[];
-    stopPropagation?: boolean;
+  callbackAction?: CallbackAction;
+  actions?: AppAction[];
+  stopPropagation?: boolean;
 
-    constructor(type: string, payload?: TPayload) {
-        this.type = type;
-        this.payload = payload as TPayload;
-        this.actions = [];
-        this.stopPropagation = false;
+  constructor(type: string, payload?: TPayload) {
+    this.type = type;
+    this.payload = payload as TPayload;
+    this.actions = [];
+    this.stopPropagation = false;
+  }
+
+  static stop(appAction: Action): void {
+    appAction.stopPropagation = true;
+  }
+
+  static getActions(appAction: Action): CallbackAction[] {
+    const actions: CallbackAction[] = [];
+
+    if (typeof appAction.callbackAction === 'function') {
+      actions.push(appAction.callbackAction);
     }
 
-    static stop(appAction: Action): void {
-        appAction.stopPropagation = true;
+    if (Array.isArray(appAction.actions) && appAction.actions.length > 0) {
+      appAction.actions.forEach(action => {
+        actions.push(() => action);
+      });
     }
 
-    static getActions(appAction: Action): CallbackAction[] {
-        const actions: CallbackAction[] = [];
+    return actions;
+  }
 
-        if (typeof appAction.callbackAction === "function") {
-            actions.push(appAction.callbackAction);
-        }
+  stop(): void {
+    AppAction.stop(this);
+  }
 
-        if (Array.isArray(appAction.actions) && appAction.actions.length > 0) {
-            appAction.actions.forEach((action) => {
-                actions.push(() => action);
-            });
-        }
+  getActions(): CallbackAction[] {
+    return AppAction.getActions(this);
+  }
 
-        return actions;
-    }
+  toPlainObject(): Action {
+    const keys = Object.keys(this) as (keyof AppAction)[];
+    const plainObject: Action = {} as any;
 
-    stop(): void {
-        AppAction.stop(this);
-    }
+    keys.forEach(key => {
+      if (key !== 'toPlainObject') {
+        plainObject[key] = this[key];
+      }
+    });
 
-    getActions(): CallbackAction[] {
-        return AppAction.getActions(this);
-    }
+    plainObject.stop = function () {
+      AppAction.stop(this);
+    };
+    plainObject.getActions = function () {
+      return AppAction.getActions(this);
+    };
 
-    toPlainObject(): Action {
-        const keys = Object.keys(this);
-        const plainObject: Action = {} as any;
-
-        keys.forEach((key) => {
-            if (key !== "toPlainObject") {
-                // @ts-ignore
-                plainObject[key] = this[key];
-            }
-        });
-
-        plainObject.stop = function() {
-            AppAction.stop(this);
-        };
-        plainObject.getActions = function () {
-            return AppAction.getActions(this);
-        };
-
-        return plainObject;
-    }
+    return plainObject;
+  }
 }

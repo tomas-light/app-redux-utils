@@ -1,13 +1,14 @@
-import { Action as ReduxAction } from "redux";
-import { CallbackAction } from "./CallbackAction";
+import { Action as ReduxAction } from 'redux';
+import { CallbackAction } from './CallbackAction';
 
-export interface Action<TPayload = {}> extends ReduxAction {
-    payload: TPayload;
+export interface Action<TPayload = any> extends ReduxAction {
+  payload: TPayload;
 
-    callbackAction?: CallbackAction;
-    actions?: Action[];
-    stopPropagation?: boolean;
+  callbackAction?: CallbackAction;
+  actions?: Action[];
+  stopPropagation?: boolean;
 
-    stop(): void;
-    getActions(): CallbackAction[];
+  stop(): void;
+
+  getActions(): CallbackAction[];
 }

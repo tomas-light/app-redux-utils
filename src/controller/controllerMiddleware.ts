@@ -1,5 +1,7 @@
 import { Store } from 'redux';
-import { Action, CallbackAction, isAction } from '../types';
+import {
+  Action, CallbackAction, isAction,
+} from '../types';
 import { Watcher } from './Watcher';
 
 function controllerMiddleware<TState>(watchers: Watcher<TState, any>[]) {
@@ -29,12 +31,12 @@ function controllerMiddleware<TState>(watchers: Watcher<TState, any>[]) {
 }
 
 function controllerGenerator(
-  watchers: Watcher<any, object>[],
+  watchers: Watcher<any, any>[],
   reduxStore: Store<any, Action>,
   initAction: Action,
 ): IterableIterator<Promise<any>> {
   let actionCursor = 0;
-  const actions: CallbackAction[] = [ () => initAction ];
+  const actions: CallbackAction[] = [() => initAction];
 
   function iterator(): IteratorResult<Promise<any>> {
     if (actionCursor >= actions.length) {

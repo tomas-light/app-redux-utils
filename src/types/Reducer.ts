@@ -1,25 +1,25 @@
-import { Action } from "./Action";
+import { Action } from './Action';
 
 function Reducer<TStore>(initialStore: TStore, updateActionType: string) {
-    return (
-        store: TStore = initialStore,
-        action: Action
-    ): TStore => {
-        if (action.type !== updateActionType) {
-            return store;
-        }
+  return (
+    store: TStore = initialStore,
+    action: Action
+  ): TStore => {
+    if (action.type !== updateActionType) {
+      return store;
+    }
 
-        if (typeof action.payload === 'object') {
-            return {
-                ...store,
-                ...action.payload,
-            };
-        }
+    if (typeof action.payload === 'object') {
+      return {
+        ...store,
+        ...action.payload,
+      };
+    }
 
-        return {
-            ...store,
-        };
+    return {
+      ...store,
     };
+  };
 }
 
 export { Reducer };

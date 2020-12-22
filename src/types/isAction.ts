@@ -6,5 +6,5 @@ export function isAction(action: any): action is Action {
     && 'stopPropagation' in action
     && typeof action.stop === 'function'
     && typeof action.getActions === 'function'
-    ;
+  ;
 }

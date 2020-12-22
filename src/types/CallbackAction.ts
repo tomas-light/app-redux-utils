@@ -1,3 +1,3 @@
-import { Action } from "./Action";
+import { Action } from './Action';
 
 export type CallbackAction = () => Action;

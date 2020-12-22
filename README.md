@@ -1,4 +1,3 @@
-# 
 * [install](#Installation)
 * [usage](#How to use)
 * [controllers](#Using controllers)

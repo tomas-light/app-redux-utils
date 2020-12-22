@@ -18,15 +18,15 @@ class _Controller extends ControllerBase<any> {
   calledMethods: string[] = [];
   kind: string = '';
 
-  method1(action: Action) {
+  method1() {
     this.calledMethods.push(`${this.kind}1`);
   }
 
-  method2(action: Action) {
+  method2() {
     this.calledMethods.push(`${this.kind}2`);
   }
 
-  method3(action: Action) {
+  method3() {
     this.calledMethods.push(`${this.kind}3`);
     return new Promise(resolve => {
       setTimeout(() => {
@@ -140,7 +140,7 @@ test('3 consistent actions', done => {
   });
 });
 
-test('3 consistent actions with promises', (done) => {
+test('3 consistent actions with promises', done => {
   const calledMethods: string[] = [];
 
   const nextCalled: string[] = [];
@@ -169,7 +169,7 @@ test('3 consistent actions with promises', (done) => {
   });
 });
 
-test('5 consistent actions with promises an stop propagation', (done) => {
+test('5 consistent actions with promises an stop propagation', done => {
   const calledMethods: string[] = [];
 
   const nextCalled: string[] = [];

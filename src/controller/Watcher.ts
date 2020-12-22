@@ -4,13 +4,13 @@ import { Action } from '../types';
 import { Controller } from './Controller';
 import { ControllerBase } from './ControllerBase';
 
-export type Watcher<TState, TController extends Controller = any> = {
+export type Watcher<TState, TController extends Controller> = {
   has: (actionType: string) => boolean;
-  get: (actionType: string) => keyof TController | undefined;
+  get: (actionType: string) => (keyof TController) | undefined;
   instance: (reduxStore: Store<TState, Action>) => ControllerBase<TState>;
 };
 
-export function watcher<TState, TController extends Controller = any>(
+export function watcher<TState, TController extends Controller>(
   Controller: new (reduxStore: Store<TState, Action>) => ControllerBase<TState>,
   watchList: [string, keyof TController][],
 ): Watcher<TState, TController> {
