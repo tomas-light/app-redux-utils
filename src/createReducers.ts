@@ -5,8 +5,8 @@ import {
 } from 'redux';
 
 export function createReducers<TReducers>(
-  getReducers: (...params: any) => ReducersMapObject<TReducers, any>,
-  ...params: any
+  getReducers: (...params: any[]) => ReducersMapObject<TReducers, any>,
+  ...params: any[]
 ): Reducer<TReducers> {
 
   const reducers = getReducers(...params);

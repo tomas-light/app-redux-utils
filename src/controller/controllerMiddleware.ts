@@ -1,6 +1,8 @@
 import { Store } from 'redux';
 import {
-  Action, CallbackAction, isAction,
+  Action,
+  CallbackAction,
+  isAction,
 } from '../types';
 import { Watcher } from './Watcher';
 

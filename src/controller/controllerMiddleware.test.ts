@@ -28,7 +28,7 @@ class _Controller extends ControllerBase<any> {
 
   method3() {
     this.calledMethods.push(`${this.kind}3`);
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
       }, 500);

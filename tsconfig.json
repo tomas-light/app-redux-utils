@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",
-    "checkJs": true,
     "declaration": true,
     "esModuleInterop": true,
     "importHelpers": true,
@@ -14,7 +12,7 @@
     "skipLibCheck": true,
     "strict": true,
     "sourceMap": true,
-    "target": "es5"
+    "target": "es6"
   },
   "include": ["src"],
   "exclude": [
