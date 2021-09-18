@@ -1,20 +1,38 @@
 import { Store } from 'redux';
+import { Container } from 'cheap-di';
 import {
+  AbstractStore,
   Action,
   CallbackAction,
   isAction,
 } from '../types';
 import { Watcher } from './Watcher';
 
-function controllerMiddleware<TState>(watchers: Watcher<TState, any>[]) {
-  return (reduxStore: Store<TState, Action>) => (next: (action: Action) => void) => async (action: Action) => {
+function controllerMiddleware<State>(watchers: Watcher<State, any>[], container?: Container) {
+  return (reduxStore: Store<State, Action>) => (next: (action: Action) => void) => async (action: Action) => {
     next(action);
+
+    let createController: (watcher: Watcher<any, any>) => any;
+    if (container) {
+      container.registerInstance(reduxStore).as(AbstractStore);
+      createController = (watcher: Watcher<any, any>) => {
+        const internalDependencies = (container as any as { dependencies: Map<any, any> }).dependencies;
+        if (internalDependencies && !internalDependencies.has(watcher.type)) {
+          container.registerType(watcher.type);
+        }
+
+        return container.resolve(watcher.type);
+      };
+    }
+    else {
+      createController = (watcher: Watcher<any, any>) => watcher.instance(reduxStore) as any;
+    }
 
     if (!isAction(action)) {
       return;
     }
 
-    const generator = controllerGenerator(watchers, reduxStore, action);
+    const generator = controllerGenerator(watchers, createController, action);
 
     let iterator: IteratorResult<Promise<any>>;
     do {
@@ -34,7 +52,7 @@ function controllerMiddleware<TState>(watchers: Watcher<TState, any>[]) {
 
 function controllerGenerator(
   watchers: Watcher<any, any>[],
-  reduxStore: Store<any, Action>,
+  createController: (watcher: Watcher<any, any>) => any,
   initAction: Action,
 ): IterableIterator<Promise<any>> {
   let actionCursor = 0;
@@ -54,7 +72,7 @@ function controllerGenerator(
     watchers.forEach(watcher => {
       const actionName = watcher.get(action.type);
       if (actionName) {
-        const controller = watcher.instance(reduxStore) as any;
+        const controller = createController(watcher);
         promises.push(
           controller[actionName](action)
         );

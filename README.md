@@ -1,6 +1,7 @@
 * [install](#Installation)
 * [usage](#How to use)
 * [controllers](#Using controllers)
+* [controllers-di](#Using controllers with cheap-di)
 * [redux-saga](#Using with redux-saga)
 
 
@@ -32,28 +33,21 @@ export interface LoadUserData {
 }
 
 export class UsersActions {
-  public static readonly PREFIX = "USERS_";
-  public static readonly UPDATE_STORE = UsersActions.PREFIX + "UPDATE_STORE";
+  static readonly PREFIX = "USERS_";
+  static readonly UPDATE_STORE = `${UsersActions.PREFIX}UPDATE_STORE`;
 
-  public static readonly LOAD_USERS = UsersActions.PREFIX + "LOAD_USERS";
-  public static readonly LOAD_USER = UsersActions.PREFIX + "LOAD_USER";
-  public static readonly LOAD_CURRENT_USER = UsersActions.PREFIX + "LOAD_CURRENT_USER";
-  public static readonly LOAD_SOMETHING_ELSE = UsersActions.PREFIX + "LOAD_SOMETHING_ELSE";
+  static readonly LOAD_USER_LIST = `${UsersActions.PREFIX}LOAD_USER_LIST`;
+  static readonly LOAD_USER = `${UsersActions.PREFIX}LOAD_USER`;
+  static readonly LOAD_CURRENT_USER = `${UsersActions.PREFIX}LOAD_CURRENT_USER`;
+  static readonly LOAD_SOMETHING_ELSE = `${UsersActions.PREFIX}LOAD_SOMETHING_ELSE`;
 
-  public static updateStore = (partialStore: Partial<UsersStore>) =>
+  static updateStore = (partialStore: Partial<UsersStore>) =>
     createAction(UsersActions.UPDATE_STORE, partialStore);
 
-  public static loadUsers = () =>
-    createAction(UsersActions.LOAD_USERS);
-
-  public static loadUser = (data: LoadUserData) =>
-    createAction(UsersActions.LOAD_USER, data);
-
-  public static loadCurrentUser = () =>
-    createActionWithCallback(UsersActions.LOAD_CURRENT_USER);
-
-  public static loadSomethingElse = () =>
-    createAction(UsersActions.LOAD_SOMETHING_ELSE);
+  static loadUserList = () => createAction(UsersActions.LOAD_USER_LIST);
+  static loadUser = (data: LoadUserData) => createAction(UsersActions.LOAD_USER, data);
+  static loadCurrentUser = () => createActionWithCallback(UsersActions.LOAD_CURRENT_USER);
+  static loadSomethingElse = () => createAction(UsersActions.LOAD_SOMETHING_ELSE);
 }
 ```
 
@@ -64,19 +58,18 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
 import { UsersActions } from "./Users.actions";
-import { IUsersPageCallProps, UsersPage } from "./UsersPage";
+import { Props, UsersPage } from "./UsersPage";
 
-const mapDispatchToProps = (dispatch: Dispatch): IUsersPageCallProps => {
-  return {
-    loadUsers: () => dispatch(UsersActions.loadUsers()),
-    loadUser: (userId: number) => dispatch(UsersActions.loadUser({ userId })),
-    loadCurrentUser: () => dispatch(
-      UsersActions.loadCurrentUser()(
-        () => UsersActions.loadSomethingElse()
-      )
-    ),
-  };
-};
+const mapDispatchToProps = (dispatch: Dispatch): Props => ({
+  loadUserList: () => dispatch(UsersActions.loadUserList()),
+  loadUser: (userId: number) => dispatch(UsersActions.loadUser({ userId })),
+  loadCurrentUser: () => dispatch(
+    UsersActions.loadCurrentUser()(
+      // this action will be dispatched after loadCurrentUser will be handled in controller
+      () => UsersActions.loadSomethingElse()
+    )
+  ),
+});
 
 const UsersPageContainer: ComponentType = connect(
   null,
@@ -131,7 +124,9 @@ import { State } from "./State";
 import { getReducers } from "./getReducers";
 
 export function configureApp(): Store<State> {
-  const composeEnhancer = window["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"] || compose;
+  const devtoolsComposer = window["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"];
+  const composeEnhancer = devtoolsComposer || compose;
+
   const store: Store<State> = createStore(
     createReducers(getReducers),
     composeEnhancer(applyMiddleware())
@@ -142,6 +137,10 @@ export function configureApp(): Store<State> {
 ```
 
 ### <a name="controllers"></a> Using controllers
+
+Controller - is place for piece of logic in your application. 
+It differences from Saga in redux-saga - your methods is not static! 
+It allows you to use dependency injection technics and simplify tests in some cases. 
 
 ```ts
 // User.controller.ts
@@ -155,7 +154,7 @@ export class UserController extends ControllerBase<State> {
     this.dispatch(UsersActions.updateStore(partialStore));
   }
 
-  async loadUsers() {
+  async loadUserList() {
     this.updateStore({
       usersAreLoading: true,
     });
@@ -166,7 +165,7 @@ export class UserController extends ControllerBase<State> {
         usersAreLoading: false,
       });
 
-      // show error notification or something elase
+      // show error notification or something else
       return;
     }
 
@@ -177,8 +176,11 @@ export class UserController extends ControllerBase<State> {
       users,
     });
   }
+  
+  loadUser(action: Action<LoadUserData>) {/* ... */}
+  loadCurrentUser() {/* ... */}
+  loadSomethingElse() {/* ... */}
 }
-
 ```
 
 ```ts
@@ -192,9 +194,14 @@ export const UserWatcher = watcher<UserController>(
   UserController,
   [
     [
-      UserActions.LOAD_USERS,
-      'loadUsers',
+      UserActions.LOAD_USER_LIST,
+      'loadUserList', // typescript will check that this string corresponds to real method name in your controller
     ],
+    [
+      UserActions.LOAD_USER,
+      'loadUser',
+    ],
+    //...
   ]);
 ```
 
@@ -214,18 +221,16 @@ export { controllerWatchers };
 
 ```ts
 // configureApp.ts
-import { createReducers, controllerMiddleware } from "app-redux-utils";
-import { applyMiddleware, compose, createStore, Store } from "redux";
-
+import { controllerMiddleware } from "app-redux-utils";
+import { createStore, /* ... */ } from "redux";
 import { controllerWatchers } from "./controllerWatchers";
-import { State } from "./State";
-import { getReducers } from "./getReducers";
+// ...
 
 export function configureApp(): Store<State> {
-  const composeEnhancer = window["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"] || compose;
+  // ...
+
   const store: Store<State> = createStore(
-    createReducers(getReducers),
-    composeEnhancer(applyMiddleware()),
+    // ...
     controllerMiddleware(controllerWatchers) // here we connect middleware
   );
 
@@ -233,41 +238,74 @@ export function configureApp(): Store<State> {
 }
 ```
 
+### <a name="controller-di"></a> Using controllers with cheap-di
+
+```ts
+// configureApp.ts
+import { controllerMiddleware } from "app-redux-utils";
+import { container } from 'cheap-di';
+import { createStore, /* ... */ } from "redux";
+import { controllerWatchers } from "./controllerWatchers";
+// ...
+
+export function configureApp(): Store<State> {
+  // ...
+
+  const store: Store<State> = createStore(
+    // ...
+    controllerMiddleware(controllerWatchers, container) // add container as second param
+  );
+
+  return store;
+}
+```
+
+```ts
+// User.controller.ts
+import { ControllerBase, AbstractStore } from 'app-redux-utils';
+import { State } from "./State";
+import { UsersActions } from "./Users.actions";
+import { UsersStore } from "./Users.store";
+import { metadata } from "./metadata"; // read cheap-di README to know what is it
+
+@metadata
+export class UserController extends ControllerBase<State> {
+  constructor(
+    store: AbstractStore<State>,
+    private readonly service: MyService
+  ) {
+    super(store);
+  }
+  // ...
+}
+```
+
+```ts
+// App.tsx
+import { useEffect } from 'react';
+import { container } from 'cheap-di';
+
+const App = () => {
+  useEffect(() => {
+    container.registerType(MyService);
+  }, []);
+
+  return /* your layout */;
+}
+```
+
 ### <a name="redux-saga"></a> Using with redux-saga
 
 ```ts
 // Users.saga.ts
-import { put } from "@redux-saga/core/effects";
 import { Action } from "app-redux-utils";
-
-import { UsersApi } from "@api/UsersApi";
-import { UsersActions, ILoadUserData } from "../redux/Users.actions";
-import { UsersStore } from "../redux/Users.store";
+import { LoadUserData } from "../redux/Users.actions";
 
 export class UsersSaga {
-  private static* updateStore(partialStore: Partial<UsersStore>) {
-    yield put(UsersActions.updateStore(partialStore));
-  }
-
-  public static* loadUsers(action: Action) {
-    // some logic ...
-
-    yield UsersSaga.updateStore({
-      users: [],
-    });
-  }
-
-  public static* loadUser(action: Action<ILoadUserData>) {
-    // some logic ...
-
-    const response = yield UsersApi.getUserById(action.payload.userId);
-
-    yield UsersSaga.updateStore({
-      openedUser: response.data,
-    });
-  }
-
-  // other sagas...
+  static * loadUserList() {/* ... */}
+  static * loadUser(action: Action<LoadUserData>) {/* ... */}
+  static * loadCurrentUser() {/* ... */}
+  static * loadSomethingElse() {/* ... */}
 }
 ```
 
@@ -333,7 +371,7 @@ export class UsersWatcher {
 ```ts
 // configureApp.ts
 import { createReducers } from "app-redux-utils";
-import { applyMiddleware, compose, createStore, Store } from "redux";
+import { applyMiddleware, createStore /* ... */ } from "redux";
 import createSagaMiddleware, { SagaMiddleware } from "redux-saga";
 
 import { State } from "./State";
@@ -341,15 +379,11 @@ import { getReducers } from "./getReducers";
 import { UsersWatcher } from "./Users.watcher";
 
 export function configureApp(): Store<State> {
-  const sagaMiddleware: SagaMiddleware = createSagaMiddleware();
-  const middleware = applyMiddleware(
-    sagaMiddleware
-  );
+  // ...
 
-  const composeEnhancer = window["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"] || compose;
   const store: Store<State> = createStore(
     createReducers(getReducers),
-    composeEnhancer(middleware)
+    composeEnhancer(applyMiddleware(createSagaMiddleware()))
   );
 
   const watcher = new UsersWatcher();

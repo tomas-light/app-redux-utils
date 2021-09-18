@@ -8,6 +8,7 @@ type Watcher<TState, TController extends Controller> = {
   has: (actionType: string) => boolean;
   get: (actionType: string) => (keyof TController) | undefined;
   instance: (reduxStore: Store<TState, Action>) => ControllerBase<TState>;
+  type: new (reduxStore: Store<TState, Action>) => ControllerBase<TState>,
 };
 
 function watcher<TState, TController extends Controller>(
@@ -21,6 +22,7 @@ function watcher<TState, TController extends Controller>(
     has: (actionType: string) => map.has(actionType),
     get: (actionType: string) => map.get(actionType),
     instance: (reduxStore: Store<TState, Action>) => new Controller(reduxStore),
+    type: Controller,
   };
 }
 
