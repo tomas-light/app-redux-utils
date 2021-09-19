@@ -4,24 +4,24 @@ import { Action } from '../types';
 import { Controller } from './Controller';
 import { ControllerBase } from './ControllerBase';
 
-type Watcher<TState, TController extends Controller> = {
+type Watcher<State, TController extends Controller> = {
   has: (actionType: string) => boolean;
   get: (actionType: string) => (keyof TController) | undefined;
-  instance: (reduxStore: Store<TState, Action>) => ControllerBase<TState>;
-  type: new (reduxStore: Store<TState, Action>) => ControllerBase<TState>,
+  instance: (reduxStore: Store<State, Action>) => ControllerBase<State>;
+  type: new (reduxStore: Store<State, Action>, ...args: any[]) => ControllerBase<State>,
 };
 
-function watcher<TState, TController extends Controller>(
-  Controller: new (reduxStore: Store<TState, Action>) => ControllerBase<TState>,
+function watcher<State, TController extends Controller>(
+  Controller: new (reduxStore: Store<State, Action>, ...args: any[]) => ControllerBase<State>,
   watchList: [string, keyof TController][],
-): Watcher<TState, TController> {
+): Watcher<State, TController> {
 
   const map = new Map<string, keyof TController>(watchList);
 
   return {
     has: (actionType: string) => map.has(actionType),
     get: (actionType: string) => map.get(actionType),
-    instance: (reduxStore: Store<TState, Action>) => new Controller(reduxStore),
+    instance: (reduxStore: Store<State, Action>) => new Controller(reduxStore),
     type: Controller,
   };
 }
