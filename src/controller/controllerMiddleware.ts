@@ -1,7 +1,8 @@
 import { Store } from 'redux';
 import { Container } from 'cheap-di';
+import { AbstractStore } from '../AbstractStore';
+import { MetadataStorage } from '../MetadataStorage';
 import {
-  AbstractStore,
   Action,
   CallbackAction,
   isAction,
@@ -69,7 +70,10 @@ function controllerGenerator(
     const action = actions[actionCursor]();
     const promises: Promise<void>[] = [];
 
-    watchers.forEach(watcher => {
+    const implicitWatchers = MetadataStorage.getImplicitWatchers();
+    const allWatchers = watchers.concat(implicitWatchers);
+
+    allWatchers.forEach(watcher => {
       const actionName = watcher.get(action.type);
       if (actionName) {
         const controller = createController(watcher);

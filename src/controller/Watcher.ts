@@ -1,7 +1,6 @@
 import { Store } from 'redux';
 
-import { Action } from '../types';
-import { Controller } from './Controller';
+import { Action, Controller } from '../types';
 import { ControllerBase } from './ControllerBase';
 
 type Watcher<State, TController extends Controller> = {

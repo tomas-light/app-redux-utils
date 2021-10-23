@@ -1,6 +1,6 @@
 {
   "name": "app-redux-utils",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Helpful utils for redux",
   "contributors": [
     {
@@ -11,7 +11,6 @@
   "author": "TomasLight",
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "npm run lint",
     "prepublish": "tsc",
     "build": "tsc",
     "lint": "eslint src",
@@ -24,7 +23,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "redux": "4.1.1"
+    "redux": "4.1.1",
+    "reflect-metadata": "0.1.13"
   },
   "devDependencies": {
     "@types/jest": "27.0.1",

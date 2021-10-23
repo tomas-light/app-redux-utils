@@ -1,5 +1,15 @@
+export * from './AbstractStore';
 export * from './controller';
 export * from './createAction';
 export * from './createActionWithCallback';
 export * from './createReducers';
-export * from './types';
+export {
+  Action,
+  ActionWithCallback,
+  CallbackAction,
+  isAction,
+  DecoratedWatchedController,
+} from './types';
+export * from './Reducer';
+export * from './decorators';
+export * from './symbols';

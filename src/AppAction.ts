@@ -1,5 +1,4 @@
-import { Action } from './Action';
-import { CallbackAction } from './CallbackAction';
+import { Action, CallbackAction } from './types';
 
 export class AppAction<TPayload = any> implements Action<TPayload> {
   type: any;

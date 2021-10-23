@@ -2,6 +2,7 @@
 * [usage](#How to use)
 * [controllers](#Using controllers)
 * [controllers-di](#Using controllers with cheap-di)
+* [reduce-boilerplate](#Reduce boilerplate)
 * [redux-saga](#Using with redux-saga)
 
 
@@ -292,6 +293,59 @@ const App = () => {
 
   return /* your layout */;
 }
+```
+
+### <a name="reduce-boilerplate"></a> Reduce boilerplate
+
+You can avoid boilerplate by using decorators
+
+`MyController.ts`
+```tsx
+import { ControllerBase, DecoratedWatchedController, Reducer, createAction } from 'app-redux-utils';
+import { useDispatch } from 'react-redux';
+
+type State = {
+  my: MyStore;
+};
+
+class MyStore {
+  users: string[] = [];
+
+  static update = 'My_update_store';
+  static reducer = Reducer(new MyStore(), MyStore.update);
+}
+
+@watch
+class MyController extends ControllerBase<State> {
+  updateStore(store: Partial<MyStore>) {
+    this.dispatch(createAction(MyStore.update, store));
+  }
+
+  @watch('openUserForEditing')
+  openUser(action: Action<{ userID: string; }>) {
+    //...
+  }
+}
+const myController: DecoratedWatchedController<[
+    'loadUsers' |
+    ['openUserForEditing', { userID: string; }]
+]> = MyController as any;
+
+export { myController as MyController };
+```
+
+```tsx
+import { useDispatch } from 'react-redux';
+import { MyController } from './MyController';
+
+const MyComponent = () => {
+  const dispatch = useDispatch();
+  
+  dispatch(MyController.loadUsers());
+  dispatch(MyController.openUserForEditing({ userID: '123' }));
+  
+  return <>beatiful button</>;
+};
 ```
 
 ### <a name="redux-saga"></a> Using with redux-saga

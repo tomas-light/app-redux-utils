@@ -1,7 +1,6 @@
 import { Dispatch, Store } from 'redux';
 
-import { Action } from '../types';
-import { Controller } from './Controller';
+import { Action, Controller } from '../types';
 
 export abstract class ControllerBase<TState> implements Controller {
   protected readonly dispatch: Dispatch<Action>;

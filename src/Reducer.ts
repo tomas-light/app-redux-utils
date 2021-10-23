@@ -1,4 +1,4 @@
-import { Action } from './Action';
+import { Action } from './types';
 
 function Reducer<TStore>(initialStore: TStore, updateActionType: string) {
   return (
