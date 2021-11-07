@@ -301,7 +301,7 @@ You can avoid boilerplate by using decorators
 
 `MyController.ts`
 ```tsx
-import { ControllerBase, DecoratedWatchedController, Reducer, createAction } from 'app-redux-utils';
+import { ControllerBase, DecoratedWatchedController, Reducer, createAction, WatchedController } from 'app-redux-utils';
 import { useDispatch } from 'react-redux';
 
 type State = {
@@ -326,10 +326,14 @@ class MyController extends ControllerBase<State> {
     //...
   }
 }
+
 const myController: DecoratedWatchedController<[
     'loadUsers' |
     ['openUserForEditing', { userID: string; }]
 ]> = MyController as any;
+
+// if you use the same name for all Controller methods (like `@watch addUser(action: ...) {...}`)
+// const myController: WatchedController<MyController> = MyController as any;
 
 export { myController as MyController };
 ```
