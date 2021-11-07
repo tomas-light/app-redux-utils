@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.5.4
+
+* fix `WatchedController` type -> fix function parameter inferring;
+
 ### 1.5.3
 
 * fix `WatchedController` type -> return type is action;

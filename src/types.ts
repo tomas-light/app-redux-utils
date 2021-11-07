@@ -65,11 +65,13 @@ type DecoratedWatchedController<Watchers extends readonly any[]>
   = SimpleActions<Watchers> & ComplexAction<Watchers>;
 
 type WatchedController<TController extends Controller> = {
-  [methodName in keyof TController]: TController[methodName] extends (...args: any) => any
-    ? Parameters<TController[methodName]>[0] extends Action<infer ActionType>
-      ? (param: ActionType) => Action<ActionType>
-      : TController[methodName]
-    : never;
+  [methodName in keyof TController]: TController[methodName] extends (param: infer Param) => any
+    ? Param extends Action<infer ActionType>
+      ? ActionType extends NonNullable<any>
+        ? (param: ActionType) => Action<ActionType>
+        : () => Action
+      : (...params: Parameters<TController[methodName]>) => Action
+    : TController[methodName];
 };
 
 export type {
