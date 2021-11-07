@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.5.2
+
+* fix import;
+
 ### 1.5.1
 
 * add `WatchedController` type;

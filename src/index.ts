@@ -9,6 +9,7 @@ export {
   CallbackAction,
   isAction,
   DecoratedWatchedController,
+  WatchedController,
 } from './types';
 export * from './Reducer';
 export * from './decorators';
