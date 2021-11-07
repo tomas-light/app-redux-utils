@@ -67,7 +67,7 @@ type DecoratedWatchedController<Watchers extends readonly any[]>
 type WatchedController<TController extends Controller> = {
   [methodName in keyof TController]: TController[methodName] extends (...args: any) => any
     ? Parameters<TController[methodName]>[0] extends Action<infer ActionType>
-      ? (param: ActionType) => void
+      ? (param: ActionType) => Action<ActionType>
       : TController[methodName]
     : never;
 };

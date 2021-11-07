@@ -1,5 +1,9 @@
 # Changelog
 
+### 1.5.3
+
+* fix `WatchedController` type -> return type is action;
+
 ### 1.5.2
 
 * fix import;
