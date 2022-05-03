@@ -1,17 +1,17 @@
-import { Store } from 'redux';
+import { Dispatch, MiddlewareAPI } from 'redux';
 
-import { Action, Controller } from '../types';
+import { Controller } from '../types';
 import { ControllerBase } from './ControllerBase';
 
 type Watcher<State, TController extends Controller> = {
   has: (actionType: string) => boolean;
   get: (actionType: string) => (keyof TController) | undefined;
-  instance: (reduxStore: Store<State, Action>) => ControllerBase<State>;
-  type: new (reduxStore: Store<State, Action>, ...args: any[]) => ControllerBase<State>,
+  instance: (middlewareAPI: MiddlewareAPI<Dispatch, State>) => ControllerBase<State>;
+  type: new (middlewareAPI: MiddlewareAPI<Dispatch, State>, ...args: any[]) => ControllerBase<State>,
 };
 
 function watcher<State, TController extends Controller>(
-  Controller: new (reduxStore: Store<State, Action>, ...args: any[]) => ControllerBase<State>,
+  Controller: new (middlewareAPI: MiddlewareAPI<Dispatch, State>, ...args: any[]) => ControllerBase<State>,
   watchList: [string, keyof TController][],
 ): Watcher<State, TController> {
 
@@ -20,7 +20,7 @@ function watcher<State, TController extends Controller>(
   return {
     has: (actionType: string) => map.has(actionType),
     get: (actionType: string) => map.get(actionType),
-    instance: (reduxStore: Store<State, Action>) => new Controller(reduxStore),
+    instance: (middlewareAPI: MiddlewareAPI<Dispatch, State>) => new Controller(middlewareAPI),
     type: Controller,
   };
 }

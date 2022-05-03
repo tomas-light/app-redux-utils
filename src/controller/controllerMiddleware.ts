@@ -1,21 +1,27 @@
-import { Store } from 'redux';
+import { Dispatch, Middleware, MiddlewareAPI } from 'redux';
 import { Container } from 'cheap-di';
 import { AbstractStore } from '../AbstractStore';
 import { MetadataStorage } from '../MetadataStorage';
-import {
-  Action,
-  CallbackAction,
-  isAction,
-} from '../types';
+import { Action, CallbackAction, isAction, } from '../types';
 import { Watcher } from './Watcher';
 
-function controllerMiddleware<State>(watchers: Watcher<State, any>[], container?: Container) {
-  return (reduxStore: Store<State, Action>) => (next: (action: Action) => void) => async (action: Action) => {
+type MiddlewareOptions<State> = {
+  watchers?: Watcher<State, any>[],
+  container?: Container;
+}
+
+function controllerMiddleware<State>(options: MiddlewareOptions<State> = {}): Middleware<Dispatch, State> {
+  const {
+    watchers = [],
+    container,
+  } = options;
+
+  return (middlewareAPI: MiddlewareAPI<Dispatch, State>) => (next: (action: Action) => void) => async (action: Action) => {
     next(action);
 
     let createController: (watcher: Watcher<any, any>) => any;
     if (container) {
-      container.registerInstance(reduxStore).as(AbstractStore);
+      container.registerInstance(middlewareAPI).as(AbstractStore);
       createController = (watcher: Watcher<any, any>) => {
         const internalDependencies = (container as any as { dependencies: Map<any, any> }).dependencies;
         if (internalDependencies && !internalDependencies.has(watcher.type)) {
@@ -26,7 +32,7 @@ function controllerMiddleware<State>(watchers: Watcher<State, any>[], container?
       };
     }
     else {
-      createController = (watcher: Watcher<any, any>) => watcher.instance(reduxStore) as any;
+      createController = (watcher: Watcher<any, any>) => watcher.instance(middlewareAPI) as any;
     }
 
     if (!isAction(action)) {

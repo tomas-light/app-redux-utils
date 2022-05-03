@@ -1,7 +1,8 @@
+import { Reducer as ReduxReducer, AnyAction } from 'redux';
 import { Action } from './types';
 
 function Reducer<TStore>(initialStore: TStore, updateActionType: string) {
-  return (
+  return ((
     store: TStore = initialStore,
     action: Action
   ): TStore => {
@@ -19,7 +20,7 @@ function Reducer<TStore>(initialStore: TStore, updateActionType: string) {
     return {
       ...store,
     };
-  };
+  }) as ReduxReducer<TStore, AnyAction>;
 }
 
 export { Reducer };

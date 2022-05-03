@@ -1,4 +1,4 @@
-import { Action as ReduxAction } from 'redux';
+import { AnyAction } from 'redux';
 import { Watcher } from './controller';
 import {
   controllerWatcherSymbol,
@@ -6,7 +6,7 @@ import {
   watchersSymbol,
 } from './symbols';
 
-interface Action<TPayload = any> extends ReduxAction {
+interface Action<TPayload = any> extends AnyAction {
   payload: TPayload;
 
   callbackAction?: CallbackAction;
@@ -65,10 +65,10 @@ type DecoratedWatchedController<Watchers extends readonly any[]>
   = SimpleActions<Watchers> & ComplexAction<Watchers>;
 
 type WatchedController<TController extends Controller> = {
-  [methodName in keyof TController]: TController[methodName] extends (param: infer Param) => any
-    ? Param extends Action<infer ActionType>
-      ? ActionType extends NonNullable<any>
-        ? (param: ActionType) => Action<ActionType>
+  [methodName in keyof TController]: TController[methodName] extends (parameter: infer MethodParameter) => any
+    ? MethodParameter extends Action<infer Payload>
+      ? Payload extends NonNullable<any>
+        ? (payload: Payload) => Action<Payload>
         : () => Action
       : (...params: Parameters<TController[methodName]>) => Action
     : TController[methodName];
