@@ -2,7 +2,6 @@ export * from './Middleware';
 export * from './controller';
 export * from './createAction';
 export * from './createActionWithCallback';
-export * from './createReducers';
 export {
   Action,
   ActionWithCallback,
