@@ -1,4 +1,4 @@
-export * from './AbstractStore';
+export * from './Middleware';
 export * from './controller';
 export * from './createAction';
 export * from './createActionWithCallback';

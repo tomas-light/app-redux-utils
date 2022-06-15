@@ -4,10 +4,11 @@ import { MetadataStorage } from '../MetadataStorage';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
 import {
   Constructor,
-  Controller,
   WatchedConstructor,
 } from '../types';
 import { InheritancePreserver } from './InheritancePreserver';
+import { extractMethodNameFromActionType } from './extractMethodNameFromActionType';
+import { makeActionType } from './makeActionType';
 
 type Prototype<T = any> = {
   constructor: Constructor<T>;
@@ -26,7 +27,7 @@ function watch(constructorOrActionType?: any) {
   }
 
   if (arguments.length === 3) {
-    // eslint-disable-next-line  prefer-spread  prefer-rest-params
+    // eslint-disable-next-line prefer-spread, prefer-rest-params
     return watchMethod().apply(null, arguments as any);
   }
 
@@ -41,18 +42,19 @@ function watchConstructor(constructor: Constructor) {
     // add action creators to static methods of the controller
     Object.keys(watchers).forEach(actionType => {
       const staticMethodName = extractMethodNameFromActionType(actionType, watched.name);
-      (watched as any)[staticMethodName] = (payload?: any) => createAction(actionType, payload);
+      watched[staticMethodName as unknown as keyof typeof watched] = (payload?: any) => createAction(actionType, payload);
     });
 
-    if (!watched[controllerWatcherSymbol]) {
+    let _watcher = watched[controllerWatcherSymbol];
+    if (!_watcher) {
       const watchList = Object.keys(watchers).map(actionType => (
         [
           actionType,
           watchers[actionType],
         ] as [string, string]
       ));
-      watched[controllerWatcherSymbol] = watcher(watched, watchList);
-      MetadataStorage.addImplicitWatcher(watched[controllerWatcherSymbol]!);
+      _watcher = watched[controllerWatcherSymbol] = watcher(watched, watchList);
+      MetadataStorage.addImplicitWatcher(_watcher);
     }
   }
 
@@ -76,24 +78,13 @@ function watchMethod(actionType?: string) {
 
     actionType = makeActionType(prototype.constructor.name, actionType);
 
-    const watchers = watched[watchersSymbol]!;
-    if (!watchers[actionType]) {
+    const watchers = watched[watchersSymbol];
+    if (watchers && !watchers[actionType]) {
       watchers[actionType] = propertyKey;
     }
 
     InheritancePreserver.constructorModified(watched ?? prototype.constructor);
   };
-}
-
-/** (MyController, action) => MyController_action */
-function makeActionType(constructorName: string, actionTypeOrProperty: string) {
-  return `${constructorName.replace('Controller', '')}_${actionTypeOrProperty}`;
-}
-
-/** MyController_action => action */
-function extractMethodNameFromActionType(actionType: string, constructorName: string) {
-  const nameWithoutPostfix = constructorName.replace('Controller', '');
-  return actionType.replace(`${nameWithoutPostfix}_`, '');
 }
 
 export { watch };

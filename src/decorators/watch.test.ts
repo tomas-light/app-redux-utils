@@ -2,7 +2,9 @@ import { ControllerBase } from '../controller';
 import { createAction } from '../createAction';
 import { Reducer } from '../Reducer';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
-import { Action, WatchedConstructor, DecoratedWatchedController } from '../types';
+import {
+  Action, WatchedConstructor, DecoratedWatchedController,
+} from '../types';
 import { watch } from './watch';
 
 test('', () => {
@@ -21,12 +23,10 @@ test('', () => {
     }
 
     @watch
-    // eslint-disable-next-line no-empty-function
     loadUsers() {
     }
 
     @watch('openUserForEditing')
-    // eslint-disable-next-line no-empty-function
     openUser(action: Action<{ userID: string; }>) {
     }
   }

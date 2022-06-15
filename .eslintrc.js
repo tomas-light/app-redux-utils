@@ -4,6 +4,7 @@ module.exports = {
     'sonarjs',
     '@typescript-eslint',
   ],
+  ignorePatterns: ["*.test.ts"],
   extends: [
     'plugin:@typescript-eslint/recommended',
   ],
