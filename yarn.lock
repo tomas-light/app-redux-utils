@@ -1401,7 +1401,7 @@ __metadata:
     "@types/jest": 28.1.1
     "@typescript-eslint/eslint-plugin": 5.21.0
     "@typescript-eslint/parser": 5.21.0
-    cheap-di: 3.2.5
+    cheap-di: 3.3.1
     eslint: 8.17.0
     eslint-plugin-sonarjs: 0.13.0
     jest: 28.1.1
@@ -1409,6 +1409,8 @@ __metadata:
     reflect-metadata: 0.1.13
     ts-jest: 28.0.5
     typescript: 4.6.4
+  peerDependencies:
+    cheap-di: ">= 3.3.1"
   languageName: unknown
   linkType: soft
 
@@ -1685,12 +1687,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cheap-di@npm:3.2.5":
-  version: 3.2.5
-  resolution: "cheap-di@npm:3.2.5"
+"cheap-di@npm:3.3.1":
+  version: 3.3.1
+  resolution: "cheap-di@npm:3.3.1"
   dependencies:
     reflect-metadata: 0.1.13
-  checksum: 44259d6f414aaef3e0fb52b0a632c0a1c65e6e61cd09c3f577a9de97ca9b94fee3c80f4dfde843064f075b189d569a8fd11383779e90fb3aa5c21856c6683cea
+  checksum: d2748d07dd7ad99f3f2b19171985a00342c8ae259b9c1bcc8f9f4b9108d67c68caedef0f839796f0a7039bcc36d3637aa4812d22c2216c6735848b3bb2cca10e
   languageName: node
   linkType: hard
 
