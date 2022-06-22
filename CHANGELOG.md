@@ -1,5 +1,19 @@
 # Changelog
 
+### 1.7.2:
+* move cheap-di to peerDependencies
+
+### 1.7.1:
+* Breaking changes:
+  * remove createReducers function, because of deprecation;
+
+### 1.7.0:
+* Breaking changes:
+  * AbstractStore renamed to Middleware, and now it implements MiddlewareAPI instead of Store;
+
+### 1.6.0:
+* update types to support redux 4.2.0;
+
 ### 1.5.4
 
 * fix `WatchedController` type -> fix function parameter inferring;
