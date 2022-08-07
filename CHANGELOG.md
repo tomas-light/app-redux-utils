@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.8.0:
+* Breaking changes:
+  * controller methods are called asynchronously with dispatch (previous it was synchronously).
+  * changed order of middlewares calls. Now passing an action deeper will be after this action was handled by our middleware.
+
 ### 1.7.2:
 * move `cheap-di` to peerDependencies
 

@@ -1401,16 +1401,17 @@ __metadata:
     "@types/jest": 28.1.1
     "@typescript-eslint/eslint-plugin": 5.21.0
     "@typescript-eslint/parser": 5.21.0
-    cheap-di: 3.3.1
+    cheap-di: 3.3.2
     eslint: 8.17.0
     eslint-plugin-sonarjs: 0.13.0
     jest: 28.1.1
+    prettier: 2.7.1
     redux: 4.2.0
     reflect-metadata: 0.1.13
     ts-jest: 28.0.5
     typescript: 4.6.4
   peerDependencies:
-    cheap-di: ">= 3.3.1"
+    cheap-di: ">= 3.2.0"
   languageName: unknown
   linkType: soft
 
@@ -1687,12 +1688,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cheap-di@npm:3.3.1":
-  version: 3.3.1
-  resolution: "cheap-di@npm:3.3.1"
+"cheap-di@npm:3.3.2":
+  version: 3.3.2
+  resolution: "cheap-di@npm:3.3.2"
   dependencies:
     reflect-metadata: 0.1.13
-  checksum: d2748d07dd7ad99f3f2b19171985a00342c8ae259b9c1bcc8f9f4b9108d67c68caedef0f839796f0a7039bcc36d3637aa4812d22c2216c6735848b3bb2cca10e
+  checksum: 96ab0a916d9024714e1a827d4603afc8b368387cb29df48f6014b2094476c55d9d026506fa266ddfd0ad50baa35e75fc9d21fa6f9106ae06f354bfac4d528cdf
   languageName: node
   linkType: hard
 
@@ -3844,6 +3845,15 @@ __metadata:
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
   checksum: cd192ec0d0a8e4c6da3bb80e4f62afe336df3f76271ac6deb0e6a36187133b6073a19e9727a1ff108cd8b9982e4768850d413baa71214dd80c7979617dca827a
+  languageName: node
+  linkType: hard
+
+"prettier@npm:2.7.1":
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
   languageName: node
   linkType: hard
 

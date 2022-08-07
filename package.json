@@ -1,6 +1,6 @@
 {
   "name": "app-redux-utils",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "description": "Helpful utils for redux",
   "contributors": [
     {
@@ -33,6 +33,7 @@
     "eslint": "8.17.0",
     "eslint-plugin-sonarjs": "0.13.0",
     "jest": "28.1.1",
+    "prettier": "2.7.1",
     "ts-jest": "28.0.5",
     "typescript": "4.6.4"
   },
