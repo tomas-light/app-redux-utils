@@ -5,6 +5,7 @@
 * [controllers](#Using controllers)
 * [redux-saga](#Using with redux-saga)
 
+This library is not maintained anymore, please use https://github.com/TomasLight/react-redux-controller
 
 ### <a name="install"></a> Installation
 
